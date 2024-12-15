@@ -20,7 +20,7 @@ function Login() {
     const password = formData.get("password");
 
     try {
-      const res = await apiRequest.post("http://localhost:3000/login", {
+      const res = await apiRequest.post("http://localhost:3000/api/login", {
         username,
         password,
       });

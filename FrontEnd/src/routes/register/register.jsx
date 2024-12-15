@@ -1,7 +1,8 @@
 import "./register.scss";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import apiRequest from "../../lib/apiRequest";
+import { AuthContext } from "../../context/AuthContext";
 
 function Register() {
   const [error, setError] = useState("");
@@ -12,6 +13,7 @@ function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const { updateUser } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ function Register() {
     }
 
     try {
-      const res = await apiRequest.post("http://localhost:3000/register", {
+      const res = await apiRequest.post("http://localhost:3000/api/register", {
         username,
         email,
         password,
@@ -34,7 +36,9 @@ function Register() {
         role: 'both'
         // Role is set to 'both' by default in server.js
       });
-
+      // Update user context and store user information in local storage
+      updateUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user)); // Store user in local storage
       // Redirect to home page on successful registration
       navigate("/");
 

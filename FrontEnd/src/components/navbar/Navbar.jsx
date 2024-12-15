@@ -1,55 +1,55 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
 import "./navbar.scss";
-import { Link } from "react-router-dom";
-import { userData } from "../../lib/dummydata";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
-  const currentUser = userData; // Dữ liệu tĩnh
+  const { currentUser, updateUser } = useContext(AuthContext); // Lấy currentUser và updateUser
+  const navigate = useNavigate(); // Khởi tạo useNavigate
+
+  const handleLogout = () => {
+    localStorage.removeItem("user"); // Xóa dữ liệu người dùng khỏi local storage
+    updateUser(null); // Cập nhật AuthContext về trạng thái không có người dùng
+    navigate("/"); // Điều hướng đến trang chính
+  };
 
   return (
     <nav>
       <div className="left">
-        <a href="/" className="logo">
+        <Link to="/" className="logo">
           <img src="/favicon.png" alt="" />
           <span>RentHouse</span>
-        </a>
-        {/* <a href="/">Home</a>
-        <a href="/">About</a>
-        <a href="/">Contact</a>
-        <a href="/">Agents</a> */}
+        </Link>
       </div>
       <div className="right">
-        {currentUser ? (
+        {currentUser ? ( // Sử dụng currentUser từ AuthContext
           <div className="user">
-            <img src={currentUser.img || "/noavatar.jpg"} alt="" />
-            <span>{currentUser.name}</span>
+            <img src={currentUser.avatar || "/noavatar.jpg"} alt="User Avatar" />
+            <span>{currentUser.username}</span>
             <Link to="/profile" className="profile">
               <span>Profile</span>
             </Link>
+            <button onClick={handleLogout}>Logout</button> {/* Nút đăng xuất */}
           </div>
         ) : (
           <>
-            <a href="/login">Sign in</a>
-            <a href="/register" className="register">
+            <Link to="/login">Sign in</Link>
+            <Link to="/register" className="register">
               Sign up
-            </a>
+            </Link>
           </>
         )}
-        <div className="menuIcon">
-          <img
-            src="/menu.png"
-            alt=""
-            onClick={() => setOpen((prev) => !prev)}
-          />
+        <div className="menuIcon" onClick={() => setOpen((prev) => !prev)}>
+          <img src="/menu.png" alt="Menu" />
         </div>
         <div className={open ? "menu active" : "menu"}>
-          <a href="/">Home</a>
-          <a href="/">About</a>
-          <a href="/">Contact</a>
-          <a href="/">Agents</a>
-          <a href="/">Sign in</a>
-          <a href="/">Sign up</a>
+          <Link to="/">Home</Link>
+          <Link to="/about">About</Link>
+          <Link to="/contact">Contact</Link>
+          <Link to="/agents">Agents</Link>
+          <Link to="/login">Sign in</Link>
+          <Link to="/register">Sign up</Link>
         </div>
       </div>
     </nav>

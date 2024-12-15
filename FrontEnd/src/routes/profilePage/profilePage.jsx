@@ -1,10 +1,23 @@
+import React, { useEffect, useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import List from "../../components/list/List";
+import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
 import "./profilePage.scss";
-import { Link } from "react-router-dom";
-import { userData } from "../../lib/dummydata"; // Dữ liệu người dùng
 
 function ProfilePage() {
-  const currentUser = userData;
+  const { currentUser } = useContext(AuthContext); // Lấy currentUser từ AuthContext
+  const [user, setUser] = useState(currentUser); // Khởi tạo state user bằng currentUser từ context
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Lấy thông tin người dùng từ localStorage nếu không có trong context
+    if (!user) {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    }
+  }, [user]);
 
   return (
     <div className="profilePage">
@@ -17,14 +30,28 @@ function ProfilePage() {
             </Link>
           </div>
           <div className="info">
-            <span>
-              Ảnh đại diện:
-              <img src={currentUser.img || "/noavatar.jpg"} alt="" />
-            </span>
-            <span>
-              Tên đăng nhập: <b>{currentUser.name}</b>
-            </span>
-            <button>Đăng xuất</button>
+            {user ? (
+              <>
+                <span>
+                  Ảnh đại diện:
+                  <img src={user.avatar || "/noavatar.jpg"} alt="Avatar" />
+                </span>
+                <span>
+                  Tên đăng nhập: <b>{user.username}</b>
+                </span>
+                <span>
+                  Email: <b>{user.email}</b>
+                </span>
+                <span>
+                  Số điện thoại: <b>{user.phone_number}</b>
+                </span>
+                <span>
+                  Vai trò: <b>{user.role}</b>
+                </span>
+              </>
+            ) : (
+              <span>Đang tải thông tin người dùng...</span>
+            )}
           </div>
           <div className="title">
             <h1>Danh sách của tôi</h1>
@@ -32,7 +59,7 @@ function ProfilePage() {
               <button>Tạo bài đăng mới</button>
             </Link>
           </div>
-          <List /> {/* List đã có dữ liệu tĩnh */}
+          <List /> {/* Danh sách đã có dữ liệu tĩnh */}
           <div className="title">
             <h1>Danh sách đã lưu</h1>
           </div>
