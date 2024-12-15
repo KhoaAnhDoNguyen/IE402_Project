@@ -1,15 +1,13 @@
 import { useContext, useState } from "react";
 import "./login.scss";
 import { Link, useNavigate } from "react-router-dom";
-import apiRequest from "../../lib/apiRequest";
+import apiRequest from "../../lib/apiRequest"; // Ensure this points to your API utility
 import { AuthContext } from "../../context/AuthContext";
 
 function Login() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const { updateUser } = useContext(AuthContext);
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -22,20 +20,23 @@ function Login() {
     const password = formData.get("password");
 
     try {
-      const res = await apiRequest.post("/auth/login", {
+      const res = await apiRequest.post("http://localhost:3000/login", {
         username,
         password,
       });
 
-      updateUser(res.data);
+      // Update user context and store user information in local storage
+      updateUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user)); // Store user in local storage
 
-      navigate("/");
+      navigate("/"); // Navigate to the home page on successful login
     } catch (err) {
-      setError(err.response.data.message);
+      setError(err.response?.data?.error || "Login failed"); // Handle errors
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="login">
       <div className="formContainer">
@@ -45,7 +46,7 @@ function Login() {
             name="username"
             required
             minLength={3}
-            maxLength={20}
+            maxLength={50}
             type="text"
             placeholder="Username"
           />

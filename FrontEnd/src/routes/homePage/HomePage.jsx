@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Hero from "./hero/Hero";
 import Recent from "./recent/Recent";
 // import "./homePage.scss";
@@ -7,6 +7,16 @@ import { AuthContext } from "../../context/AuthContext";
 
 function HomePage() {
   const { currentUser } = useContext(AuthContext);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); // Parse and set user data from local storage
+    }
+  }, []);
+
+  console.log(user)
 
   return (
     <div className="homePage">
@@ -24,6 +34,7 @@ function HomePage() {
                 Chúng tôi có thể giúp bạn biến ước mơ về một ngôi nhà mới thành
                 hiện thực.
               </p>
+              {user && <p>Xin chào, {user.username}!</p>} {/* Display username if available */}
             </div>
             <button className="btn5">Khám phá ngay</button>
           </div>
