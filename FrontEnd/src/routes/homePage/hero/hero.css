@@ -50,6 +50,9 @@ form h4 {
 }
 .btn1 {
   font-size: 1.5rem;
+  height: 40px;
+  width: 80px;
+  padding-top: 10px;
 }
 @media screen and (max-width: 800px) {
   .hero .container {
