@@ -115,10 +115,56 @@ function NewPostPage() {
       formData.append("images", image); // Giả sử backend yêu cầu tên trường là "images"
     });
 
+    // Chuẩn hóa dữ liệu từ form và thêm vào formData
+    formData.append("name", e.target.name.value);
+    formData.append("street", e.target.street.value);
+    formData.append("latitude", parseFloat(e.target.latitude.value));
+    formData.append("longitude", parseFloat(e.target.longitude.value));
+    formData.append("type", e.target.property.value);
+    formData.append("price", parseFloat(e.target.price.value));
+    formData.append("description", value);
+    formData.append("availability", true);
+    formData.append("district_id", districts[selectedDistrict]?.district_id);
+    formData.append("ward_id", parseInt(e.target.ward_id.value));
+    formData.append("distance_school", e.target.distance_school.value);
+    formData.append("distance_bus", e.target.distance_bus.value);
+    formData.append("distance_food", e.target.distance_food.value);
+    formData.append("square", e.target.size.value);
+    formData.append("bedroom", parseInt(e.target.bedroom.value));
+    formData.append("bathroom", parseInt(e.target.bathroom.value));
+
+    // Kiểm tra ảnh
+    if (!images.length) {
+      setError("Vui lòng tải lên ít nhất một ảnh.");
+      return;
+    }
+
+    // Xử lý FormData cho ảnh
+    images.forEach((image) => {
+      if (image instanceof File) {
+        formData.append("images", image); // Thêm mỗi ảnh vào formData
+      } else {
+        setError("Tệp ảnh không hợp lệ.");
+        return;
+      }
+    });
+
+    // Kiểm tra userId
+    if (!userId) {
+      setError("Vui lòng đăng nhập.");
+      return;
+    }
+
+    // Kiểm tra các giá trị trong formData
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ": " + pair[1]); // In ra tên và giá trị của mỗi cặp
+    }
+
+    // Gửi request tạo bài đăng bất động sản và tải ảnh
     try {
       const res = await axios.post(
-        `http://localhost:3000/api/properties/${userId}`, 
-        formData,
+        `http://localhost:3000/api/properties/${userId}`,
+        formData
       );
 
       setSuccessMessage("Bài đăng đã được tạo thành công!");
@@ -131,7 +177,8 @@ function NewPostPage() {
         errorMessage = err.response.data.message || errorMessage;
       } else if (err.request) {
         console.error("No response received:", err.request);
-        errorMessage = "Không nhận được phản hồi từ server. Vui lòng thử lại sau.";
+        errorMessage =
+          "Không nhận được phản hồi từ server. Vui lòng thử lại sau.";
       } else {
         console.error("Error message:", err.message);
         errorMessage = `Lỗi không xác định: ${err.message}`;

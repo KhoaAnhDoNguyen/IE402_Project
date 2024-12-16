@@ -1,270 +1,156 @@
-// import React, { useState, useEffect } from "react";
-// import "./recent.css";
-// import RecentCard from "./RecentCard";
-
-// const Recent = () => {
-//   const [properties, setProperties] = useState([]); // Dữ liệu từ API
-//   const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-//   const itemsPerPage = 3; // Số card mỗi trang
-
-//   useEffect(() => {
-//     const fetchProperties = async () => {
-//       try {
-//         const response = await fetch("http://localhost:3000/api/properties"); // Fetch từ API
-
-//         const data = await response.json();
-//         console.log("Dữ liệu trả về từ API:", data); // In dữ liệu ra console
-//         setProperties(data); // Cập nhật state với dữ liệu từ API
-//       } catch (error) {
-//         console.error("Error fetching properties:", error);
-//       }
-//     };
-
-//     fetchProperties();
-//   }, []);
-
-//   // Tính toán các card hiển thị cho trang hiện tại
-//   const startIndex = (currentPage - 1) * itemsPerPage;
-//   const endIndex = startIndex + itemsPerPage;
-//   const currentItems = properties.slice(startIndex, endIndex);
-
-//   // Xử lý điều hướng trang
-//   const handlePrevious = () => {
-//     if (currentPage > 1) {
-//       setCurrentPage((prev) => prev - 1);
-//     }
-//   };
-
-//   const handleNext = () => {
-//     if (endIndex < properties.length) {
-//       setCurrentPage((prev) => prev + 1);
-//     }
-//   };
-
-//   return (
-//     <section className="recent padding">
-//       <div className="container">
-//         <h1>Danh Sách Nhà Cho Thuê</h1>
-//         {/* Hiển thị các card của trang hiện tại */}
-//         <div className="recent-cards grid3">
-//           {currentItems.map((property) => (
-//             <RecentCard key={property.id} property={property} />
-//           ))}
-//         </div>
-//         {/* Nút điều hướng trang */}
-//         <div className="pagination flex">
-//           <button
-//             className="btn-pagination"
-//             onClick={handlePrevious}
-//             disabled={currentPage === 1} // Vô hiệu hóa nếu đang ở trang đầu
-//           >
-//             Trước đó
-//           </button>
-//           <span>Trang {currentPage}</span>
-//           <button
-//             className="btn-pagination"
-//             onClick={handleNext}
-//             disabled={endIndex >= properties.length} // Vô hiệu hóa nếu ở trang cuối
-//           >
-//             Tiếp theo
-//           </button>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default Recent;
-
-// import React, { useState, useEffect } from "react";
-// import "./recent.css";
-// import RecentCard from "./RecentCard";
-
-// const Recent = () => {
-//   const [properties, setProperties] = useState([]); // Dữ liệu từ API
-//   const [savedList, setSavedList] = useState(() => {
-//     return JSON.parse(localStorage.getItem("savedList")) || []; // Khởi tạo danh sách đã lưu
-//   });
-//   const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-//   const itemsPerPage = 3; // Số card mỗi trang
-
-//   useEffect(() => {
-//     const fetchProperties = async () => {
-//       try {
-//         const response = await fetch("http://localhost:3000/api/properties"); // Fetch từ API
-//         const data = await response.json();
-//         console.log("Dữ liệu trả về từ API:", data);
-//         setProperties(data);
-//       } catch (error) {
-//         console.error("Error fetching properties:", error);
-//       }
-//     };
-
-//     fetchProperties();
-//   }, []);
-
-//   // Hàm lưu bài viết vào danh sách đã lưu
-//   const handleAddToSaved = (property) => {
-//     setSavedList((prev) => {
-//       const updatedList = [...prev, property];
-//       localStorage.setItem("savedList", JSON.stringify(updatedList));
-//       return updatedList;
-//     });
-//   };
-//   // Hàm xóa bài viết khỏi danh sách đã lưu
-//   const handleRemoveFromSaved = (property) => {
-//     const newSavedList = savedList.filter((item) => item.id !== property.id);
-//     setSavedList(newSavedList);
-//     localStorage.setItem("savedList", JSON.stringify(newSavedList));
-//   };
-//   // Tính toán các card hiển thị cho trang hiện tại
-//   const startIndex = (currentPage - 1) * itemsPerPage;
-//   const endIndex = startIndex + itemsPerPage;
-//   const currentItems = properties.slice(startIndex, endIndex);
-
-//   // Xử lý điều hướng trang
-//   const handlePrevious = () => {
-//     if (currentPage > 1) {
-//       setCurrentPage((prev) => prev - 1);
-//     }
-//   };
-
-//   const handleNext = () => {
-//     if (endIndex < properties.length) {
-//       setCurrentPage((prev) => prev + 1);
-//     }
-//   };
-
-//   return (
-//     <section className="recent padding">
-//       <div className="container">
-//         <h1>Danh Sách Nhà Cho Thuê</h1>
-//         {/* Hiển thị các card của trang hiện tại */}
-//         <div className="recent-cards grid3">
-//           {currentItems.map((property) => (
-//             <RecentCard
-//               key={property.id}
-//               property={property}
-//               onAddToSaved={handleAddToSaved}
-//               onRemoveFromSaved={handleRemoveFromSaved}
-//             />
-//           ))}
-//         </div>
-//         {/* Nút điều hướng trang */}
-//         <div className="pagination flex">
-//           <button
-//             className="btn-pagination"
-//             onClick={handlePrevious}
-//             disabled={currentPage === 1} // Vô hiệu hóa nếu đang ở trang đầu
-//           >
-//             Trước đó
-//           </button>
-//           <span>Trang {currentPage}</span>
-//           <button
-//             className="btn-pagination"
-//             onClick={handleNext}
-//             disabled={endIndex >= properties.length} // Vô hiệu hóa nếu ở trang cuối
-//           >
-//             Tiếp theo
-//           </button>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default Recent;
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import RecentCard from "./RecentCard";
+import { AuthContext } from "../../../context/AuthContext";
 import "./recent.css";
 
 const Recent = () => {
-  const [properties, setProperties] = useState([]); // Dữ liệu từ API
-  const [savedList, setSavedList] = useState(() => {
-    return JSON.parse(localStorage.getItem("savedList")) || []; // Khởi tạo danh sách đã lưu từ localStorage
-  });
-  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-  const itemsPerPage = 3; // Số card mỗi trang
+  const { currentUser } = useContext(AuthContext);
+  const [properties, setProperties] = useState([]);
+  const [savedList, setSavedList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/properties"); // Fetch từ API
+        console.log("Fetching properties from API...");
+        const response = await fetch("http://localhost:3000/api/properties");
+        if (!response.ok) {
+          throw new Error(`Error fetching properties: ${response.statusText}`);
+        }
         const data = await response.json();
-        console.log("Dữ liệu trả về từ API:", data);
+        console.log("Properties fetched:", data); // Log data fetched from properties API
         setProperties(data);
       } catch (error) {
         console.error("Error fetching properties:", error);
+        setError(error.message);
+      }
+    };
+
+    const fetchSavedList = async () => {
+      if (!currentUser) return;
+      try {
+        console.log(`Fetching saved list for user ID: ${currentUser.id}`);
+        const response = await fetch(
+          `http://localhost:3000/api/favorites/${currentUser.id}`
+        );
+        if (!response.ok) {
+          throw new Error(`Error fetching favorites: ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log("Saved list fetched:", data); // Log data fetched from saved list API
+        const savedPropertyIds = data.map((property) => property.id);
+        console.log("Saved property IDs:", savedPropertyIds); // Log transformed saved property IDs
+        setSavedList(savedPropertyIds);
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+        setError(error.message);
       }
     };
 
     fetchProperties();
-  }, []);
+    fetchSavedList();
+  }, [currentUser]);
 
-  // Hàm lưu bài viết vào danh sách đã lưu
-  const handleAddToSaved = (property) => {
-    setSavedList((prev) => {
-      const updatedList = [...prev, property];
-      localStorage.setItem("savedList", JSON.stringify(updatedList));
-      return updatedList;
-    });
+  const handleAddToSaved = async (propertyId) => {
+    if (!currentUser) {
+      alert("Bạn cần đăng nhập để thêm vào yêu thích!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/api/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUser.id, propertyId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add property to saved list");
+      }
+
+      const result = await response.json();
+      console.log("Added to saved list:", result); // Log response after adding
+
+      setSavedList((prev) => {
+        const updatedList = [...prev, propertyId];
+        console.log("Updated saved list:", updatedList); // Log updated list
+        return updatedList;
+      });
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+      setError(error.message);
+    }
   };
 
-  // Hàm xóa bài viết khỏi danh sách đã lưu
-  const handleRemoveFromSaved = (property) => {
-    const newSavedList = savedList.filter((item) => item.id !== property.id);
-    setSavedList(newSavedList);
-    localStorage.setItem("savedList", JSON.stringify(newSavedList));
+  const handleRemoveFromSaved = async (propertyId) => {
+    if (!currentUser) return;
+
+    try {
+      const response = await fetch("http://localhost:3000/api/favorites", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: currentUser.id, propertyId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to remove property from saved list");
+      }
+
+      const result = await response.json();
+      console.log("Removed from saved list:", result); // Log response after removing
+
+      setSavedList((prev) => {
+        const updatedList = prev.filter((id) => id !== propertyId);
+        console.log("Updated saved list after removal:", updatedList); // Log updated list
+        return updatedList;
+      });
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
+      setError(error.message);
+    }
   };
 
-  // Tính toán các card hiển thị cho trang hiện tại
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = properties.slice(startIndex, endIndex);
 
-  // Xử lý điều hướng trang
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (endIndex < properties.length) {
-      setCurrentPage((prev) => prev + 1);
-    }
-  };
+  console.log("Current items for this page:", currentItems); // Log items for the current page
 
   return (
     <section className="recent padding">
       <div className="container">
         <h1>Danh Sách Nhà Cho Thuê</h1>
-        {/* Hiển thị các card của trang hiện tại */}
+        {error && <div className="error-message">{`Lỗi: ${error}`}</div>}
         <div className="recent-cards grid3">
           {currentItems.map((property) => (
             <RecentCard
               key={property.id}
               property={property}
+              isLiked={savedList.includes(property.id)}
               onAddToSaved={handleAddToSaved}
               onRemoveFromSaved={handleRemoveFromSaved}
             />
           ))}
         </div>
-        {/* Nút điều hướng trang */}
         <div className="pagination flex">
           <button
             className="btn-pagination"
-            onClick={handlePrevious}
-            disabled={currentPage === 1} // Vô hiệu hóa nếu đang ở trang đầu
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
           >
             Trước đó
           </button>
           <span>Trang {currentPage}</span>
           <button
             className="btn-pagination"
-            onClick={handleNext}
-            disabled={endIndex >= properties.length} // Vô hiệu hóa nếu ở trang cuối
+            onClick={() =>
+              setCurrentPage((prev) =>
+                endIndex < properties.length ? prev + 1 : prev
+              )
+            }
+            disabled={endIndex >= properties.length}
           >
             Tiếp theo
           </button>

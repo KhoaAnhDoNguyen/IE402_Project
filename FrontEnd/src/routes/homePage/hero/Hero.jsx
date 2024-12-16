@@ -150,7 +150,7 @@ const Hero = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/properties/filter?districtId=${query.districtId}&type=${query.type}&minPrice=${query.minPrice}&maxPrice=${query.maxPrice}`
+        `http://localhost:3000/api/properties/filter?districtId=${query.districtId}&wardId=${query.wardId}&type=${query.type}&minPrice=${query.minPrice}&maxPrice=${query.maxPrice}`
       );
       const data = await response.json();
       console.log("Dữ liệu trả về từ API:", data);
@@ -191,7 +191,7 @@ const Hero = () => {
           </div>
 
           {/* Dropdown chọn Phường (dựa vào quận đã chọn) */}
-          {/* <div className="box">
+          <div className="box">
             <span>Phường</span>
             <select
               name="wardId"
@@ -212,7 +212,7 @@ const Hero = () => {
                   </option>
                 ))}
             </select>
-          </div> */}
+          </div>
 
           {/* Dropdown chọn loại bất động sản */}
           <div className="box">

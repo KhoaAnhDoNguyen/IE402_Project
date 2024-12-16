@@ -177,7 +177,7 @@ function Filter({ setFilteredProperties }) {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/properties/filter?districtId=${query.districtId}&type=${query.type}&minPrice=${query.minPrice}&maxPrice=${query.maxPrice}`
+        `http://localhost:3000/api/properties/filter?districtId=${query.districtId}&wardId=${query.wardId}&type=${query.type}&minPrice=${query.minPrice}&maxPrice=${query.maxPrice}`
       );
       const data = await response.json();
       setFilteredProperties(data);
