@@ -1,3 +1,4 @@
+// authController.js
 import supabase from '../lib/supabase.js';
 
 // API for registration
@@ -54,5 +55,37 @@ export const login = async (req, res) => {
   } catch (error) {
     console.error('Error logging in:', error);
     res.status(500).json({ error: 'Error logging in' });
+  }
+};
+
+// API for updating user information
+export const updateUser = async (req, res) => {
+  const userId = req.params.userId; // Lấy userId từ tham số URL
+  const { username, email, phone_number, role, avatar, password } = req.body;
+
+  // Tạo đối tượng cập nhật
+  const updates = {};
+  if (username) updates.username = username;
+  if (email) updates.email = email;
+  if (phone_number) updates.phone_number = phone_number;
+  if (role) updates.role = role;
+  if (avatar) updates.avatar = avatar;
+  if (password) updates.password = password; // Cập nhật mật khẩu nếu có
+
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', userId);
+
+    if (error) {
+      console.error('Error updating user:', error);
+      return res.status(500).json({ error: 'Error updating user' });
+    }
+
+    res.status(200).json({ message: 'User updated successfully', data });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Error updating user' });
   }
 };
