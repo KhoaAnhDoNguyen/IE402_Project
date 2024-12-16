@@ -112,3 +112,162 @@ export const getFilteredProperties = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Hàm tạo property mới
+export const createProperty = async (req, res) => {
+  const userId = req.params.userId; // Lấy userId từ tham số URL
+
+  const { 
+    name, 
+    street, 
+    latitude, 
+    longitude, 
+    type, 
+    price, 
+    description, 
+    availability, 
+    district_id, 
+    ward_id, 
+    distance_school, 
+    distance_bus, 
+    distance_food, 
+    square, 
+    bedroom, 
+    bathroom 
+  } = req.body;
+
+  try {
+    // Lấy tất cả các ID hiện tại
+    const { data: existingProperties, error: fetchError } = await supabase
+      .from('properties')
+      .select('id');
+
+    if (fetchError) throw fetchError;
+
+    // Tìm ID lớn nhất
+    const existingIds = existingProperties.map(prop => prop.id);
+    const newId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
+    console.log(existingIds, newId)
+    // Chèn bản ghi mới với ID đã tạo
+    const { data, error } = await supabase
+      .from('properties')
+      .insert([{
+        id: newId, // Sử dụng ID được tạo
+        name,
+        street,
+        latitude,
+        longitude,
+        type,
+        price,
+        description,
+        availability,
+        created_by: userId,
+        district_id,
+        ward_id,
+        distance_school,
+        distance_bus,
+        distance_food,
+        square,
+        bedroom,
+        bathroom
+      }]);
+
+    if (error) throw error;
+
+    res.status(201).json({ message: 'Property created successfully', data });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getPropertiesAsc = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('properties')
+      .select(`
+        id,
+        name,
+        street,
+        latitude,
+        longitude,
+        type,
+        price,
+        description,
+        availability,
+        created_at,
+        distance_school,
+        distance_bus,
+        distance_food,
+        created_by,
+        square,
+        bedroom,
+        bathroom,
+        wards (
+          id,
+          name,
+          districts (
+            id,
+            name
+          )
+        ),
+        images (
+          id,
+          image_url,
+          alt_text
+        )
+      `)
+      .order('price', { ascending: true }); // Sắp xếp theo giá tăng dần
+
+    if (error) throw error;
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getPropertiesDesc = async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('properties')
+      .select(`
+        id,
+        name,
+        street,
+        latitude,
+        longitude,
+        type,
+        price,
+        description,
+        availability,
+        created_at,
+        distance_school,
+        distance_bus,
+        distance_food,
+        created_by,
+        square,
+        bedroom,
+        bathroom,
+        wards (
+          id,
+          name,
+          districts (
+            id,
+            name
+          )
+        ),
+        images (
+          id,
+          image_url,
+          alt_text
+        )
+      `)
+      .order('price', { ascending: false }); // Sắp xếp theo giá giảm dần
+
+    if (error) throw error;
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
