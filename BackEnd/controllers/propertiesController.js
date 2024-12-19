@@ -75,7 +75,12 @@ export const getFilteredProperties = async (req, res) => {
       districts (
         id,
         name
-      )
+      ),
+      images (
+        id,
+        image_url,
+        alt_text
+      )  // Thêm thông tin hình ảnh
     `);
 
     // Lọc theo district_id nếu có
