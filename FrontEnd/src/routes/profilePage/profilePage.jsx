@@ -64,6 +64,10 @@ function ProfilePage() {
             <h1>Danh sách đã lưu</h1>
           </div>
           <List /> {/* Dữ liệu tĩnh đã có trong List */}
+          <div className="title">
+            <h1>Danh sách đã thuê</h1>
+          </div>
+          <List />
         </div>
       </div>
     </div>
