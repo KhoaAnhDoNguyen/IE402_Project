@@ -142,22 +142,10 @@ export const createProperty = async (req, res) => {
   } = req.body;
 
   try {
-    // Lấy tất cả các ID hiện tại
-    const { data: existingProperties, error: fetchError } = await supabase
-      .from('properties')
-      .select('id');
-
-    if (fetchError) throw fetchError;
-
-    // Tìm ID lớn nhất
-    const existingIds = existingProperties.map(prop => prop.id);
-    const newId = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
-    console.log(existingIds, newId)
-    // Chèn bản ghi mới với ID đã tạo
-    const { data, error } = await supabase
+    // Tạo property mới
+    const { data: propertyData, error: propertyError } = await supabase
       .from('properties')
       .insert([{
-        id: newId, // Sử dụng ID được tạo
         name,
         street,
         latitude,
@@ -175,11 +163,33 @@ export const createProperty = async (req, res) => {
         square,
         bedroom,
         bathroom
-      }]);
+      }])
+      .single();
 
-    if (error) throw error;
+    if (propertyError) throw propertyError;
 
-    res.status(201).json({ message: 'Property created successfully', data });
+    // Lưu ID của property mới tạo
+    const propertyId = propertyData.id;
+
+    // Xử lý upload ảnh
+    const images = req.files; // Giả sử bạn đã cấu hình multer để xử lý nhiều file
+
+    const uploadPromises = images.map(async (file) => {
+      const fileName = `${Date.now()}_${file.originalname}`;
+      const { error: uploadError } = await supabase.storage
+        .from('IE402_Image')
+        .upload(fileName, file.buffer, { cacheControl: '3600', upsert: false });
+
+      if (uploadError) throw uploadError;
+
+      const publicURL = `https://frjddntilpbemgetzbbg.supabase.co/storage/v1/object/public/IE402_Image/${fileName}`;
+
+      await supabase.from('images').insert([{ property_id: propertyId, image_url: publicURL, alt_text: file.originalname }]);
+    });
+
+    await Promise.all(uploadPromises);
+
+    res.status(201).json({ message: 'Property created successfully', data: propertyData });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
