@@ -1,6 +1,7 @@
 .recent .text {
   padding: 30px;
 }
+
 .recent .category span {
   padding: 4px 15px;
   border-radius: 2px;
@@ -8,23 +9,68 @@
   font-size: 13px;
   display: inline-block;
 }
+
 .recent .category i {
   font-size: 20px;
   color: #bec7d8;
 }
+
 .recent p {
   color: #72809d;
 }
+
 .recent .button {
+  margin-top: auto; /* Đẩy phần nút xuống đáy card */
   border-top: 1px solid #e4e8f3;
   padding: 10px 30px;
+  background-color: #f9f9f9; /* Tùy chỉnh màu nền nếu cần */
 }
+
 .recent h1 {
   text-align: center;
   color: #2d3954;
   font-weight: 600;
   text-transform: capitalize;
   font-size: 35px;
+}
+
+/* Hiển thị card recent dưới dạng flexbox */
+.recentCard-link .box {
+  display: flex; /* Biến box thành flex container */
+  flex-direction: column; /* Sắp xếp phần tử theo chiều dọc */
+  justify-content: space-between; /* Đảm bảo khoảng cách hợp lý */
+  height: 100%; /* Đảm bảo box chiếm toàn bộ chiều cao */
+  background-color: #fff; /* Màu nền */
+  border-radius: 5px; /* Góc bo */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng shadow */
+  overflow: hidden; /* Đảm bảo nội dung không bị tràn */
+}
+
+.recentCard-link .box .img {
+  flex-shrink: 0; /* Đảm bảo ảnh không bị co lại */
+}
+
+.recentCard-link .box .img img {
+  width: 100%; /* Đảm bảo ảnh chiếm toàn bộ chiều ngang */
+  height: 400px;
+}
+
+.recentCard-link .button {
+  text-align: center; /* Căn giữa nội dung nút */
+}
+
+.recentCard-link .btn2 {
+  background-color: #aa8453;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.recentCard-link .btn2:hover {
+  background-color: #f4b741; /* Thêm hiệu ứng hover */
 }
 
 .show-more {

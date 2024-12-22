@@ -232,15 +232,23 @@
       }
     }
   }
+  // .commentSection {
+  //   flex-shrink: 0; // Đảm bảo không co lại
+  //   width: 100%; // Chiếm toàn bộ chiều ngang
+  //   background-color: #f9f9f9;
+  //   // padding: 40px;
+  //   border-top: 1px solid #ddd;
+  //   overflow-y: visible;
+  //   margin-bottom: 20px;
+  // }
   .commentSection {
-    flex-shrink: 0; // Đảm bảo không co lại
-    width: 100%; // Chiếm toàn bộ chiều ngang
-    background-color: #f9f9f9;
-    // padding: 40px;
-    border-top: 1px solid #ddd;
-    overflow-y: visible;
-    margin-bottom: 20px;
+    max-height: 700px; /* Hoặc giới hạn chiều cao tùy ý */
+    overflow-y: auto; /* Cuộn nếu vượt quá chiều cao */
+    background-color: #f9f9f9; /* Kiểm tra với màu để debug layout */
+    padding: 20px; /* Đảm bảo không dính sát các phần tử khác */
+    box-sizing: border-box; /* Đảm bảo padding không làm vỡ layout */
   }
+
   .modalOverlay {
     position: fixed; /* Đảm bảo modal nằm cố định trên màn hình */
     top: 0;
