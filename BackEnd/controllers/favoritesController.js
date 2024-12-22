@@ -23,14 +23,60 @@ export const getFavorites = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const { data, error } = await supabase
+    // Lấy danh sách property_id từ bảng favorites
+    const { data: favorites, error: favoritesError } = await supabase
       .from('favorites')
       .select('property_id')
       .eq('user_id', userId);
 
-    if (error) throw error;
+    if (favoritesError) throw favoritesError;
 
-    res.status(200).json(data);
+    // Nếu không có favorites
+    if (!favorites.length) {
+      return res.status(200).json([]);
+    }
+
+    // Lấy thông tin chi tiết của các properties yêu thích
+    const propertyIds = favorites.map(favorite => favorite.property_id);
+    const { data: properties, error: propertiesError } = await supabase
+      .from('properties')
+      .select(`
+        id,
+        name,
+        street,
+        latitude,
+        longitude,
+        type,
+        price,
+        description,
+        availability,
+        created_at,
+        distance_school,
+        distance_bus,
+        distance_food,
+        created_by,
+        square,
+        bedroom,
+        bathroom,
+        wards (
+          id,
+          name,
+          districts (
+            id,
+            name
+          )
+        ),
+        images (
+          id,
+          image_url,
+          alt_text
+        )
+      `)
+      .in('id', propertyIds);
+
+    if (propertiesError) throw propertiesError;
+
+    res.status(200).json(properties);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

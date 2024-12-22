@@ -22,6 +22,7 @@
           gap: 5px;
 
           label {
+            font-weight: bold;
           }
 
           input {
@@ -44,6 +45,7 @@
             }
           }
         }
+
         .sendButton {
           width: 30%;
           border-radius: 5px;
@@ -72,5 +74,36 @@
       object-fit: cover;
       border-radius: 5px;
     }
+  }
+
+  .image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px; // Khoảng cách giữa phần nhập ảnh và preview ảnh
+  }
+
+  .image-container {
+    position: relative;
+    margin: 5px;
+  }
+
+  .preview-image {
+    width: 100px; // Kích thước gọn
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  .remove-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 2px 5px;
+    font-weight: bold;
   }
 }

@@ -1,8 +1,9 @@
 import express from 'express';
-import { getProperties, getFilteredProperties, createProperty , getPropertiesAsc, getPropertiesDesc,
+import { getProperties, getFilteredProperties, createProperty, getPropertiesAsc, getPropertiesDesc,
     getPropertyById
- } from '../controllers/propertiesController.js';
-import { validateUserId } from '../middleware/authMiddleware.js'; // Đổi tên import
+} from '../controllers/propertiesController.js';
+import { validateUserId } from '../middleware/authMiddleware.js'; 
+import { uploadMiddleware } from '../middleware/uploadMiddleware.js';
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.get('/properties', getProperties);
 router.get('/properties/filter', getFilteredProperties);
 
 // Route để tạo property mới với xác thực userId
-router.post('/properties/:userId', validateUserId, createProperty); // Sử dụng middleware ở đây
+router.post('/properties/:userId', validateUserId, uploadMiddleware,  createProperty); // Sử dụng middleware ở đây
 
 // Route để lấy danh sách properties theo giá tăng dần
 router.get('/properties/asc', getPropertiesAsc);
