@@ -21,8 +21,8 @@ export const createBooking = async (req, res) => {
 
 // Lấy danh sách tất cả bookings của người dùng
 export const getAllBookings = async (req, res) => {
-    const { userId } = req.params;
-
+    const { userId } = req.params; // Change to retrieve userId from params
+    console.log('Received userId:', userId); 
     try {
         const { data, error } = await supabase
             .from('bookings')
@@ -64,7 +64,7 @@ export const getAllBookings = async (req, res) => {
                     )
                 )
             `)
-            .eq('user_id', userId); // Lọc theo user_id
+            .eq('user_id', userId); // Filter by user_id
 
         if (error) {
             throw error;
@@ -75,25 +75,19 @@ export const getAllBookings = async (req, res) => {
     }
 };
 
-// Xóa một booking theo ID và user_id
+// Xóa booking có id và userId
 export const deleteBooking = async (req, res) => {
-    const { id } = req.params;
-    const { userId } = req.body; // Lấy userId từ body
-
+    const { id } = req.params; // Get both id and userId from params
+    console.log(id)
     try {
         const { data, error } = await supabase
             .from('bookings')
             .delete()
-            .eq('id', id) // Xóa booking theo ID
-            .eq('user_id', userId); // Xóa booking chỉ nếu thuộc về user_id
+            .eq('id', id) // Delete booking by ID
+            //.eq('user_id', userId); // Ensure it belongs to the correct user
 
         if (error) {
             throw error;
-        }
-
-        // Kiểm tra xem có bất kỳ dữ liệu nào được xóa không
-        if (data.length === 0) {
-            return res.status(404).json({ message: 'Booking not found or not authorized to delete' });
         }
 
         res.status(200).json({ message: 'Booking deleted successfully', booking: data });

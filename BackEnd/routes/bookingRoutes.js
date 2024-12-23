@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/bookings', createBooking);
 
 // Đường dẫn lấy tất cả bookings
-router.get('/bookings', getAllBookings);
+router.get('/bookings/:userId', getAllBookings);
 
 // Đường dẫn xóa booking theo ID
 router.delete('/bookings/:id', deleteBooking);
