@@ -1,33 +1,35 @@
+// import React from "react";
 // import "./list.scss";
 // import Card from "../card/Card";
-// import { listData } from "../../lib/dummydata"; // Import dữ liệu tĩnh
 
-// function List({ posts = listData }) {
+// function List({ posts = [] }) {
+//   if (!Array.isArray(posts) || posts.length === 0) {
+//     return <div className="list-empty">Danh sách rỗng</div>;
+//   }
+
 //   return (
 //     <div className="list">
 //       {posts.map((item) => (
-//         <Card key={item.id} item={item} />
+//         <Card key={item?.id || Math.random()} item={item || {}} />
 //       ))}
 //     </div>
 //   );
 // }
 
 // export default List;
-
 import React from "react";
 import "./list.scss";
 import Card from "../card/Card";
 
-function List({ posts = [] }) {
-  // Kiểm tra nếu danh sách rỗng
-  if (posts.length === 0) {
-    return <div className="list-empty"></div>;
+function List({ posts = [], onDelete }) {
+  if (!Array.isArray(posts) || posts.length === 0) {
+    return <div className="list-empty">Danh sách rỗng</div>;
   }
 
   return (
     <div className="list">
       {posts.map((item) => (
-        <Card key={item.id} item={item} />
+        <Card key={item?.id || Math.random()} item={item} onDelete={onDelete} />
       ))}
     </div>
   );

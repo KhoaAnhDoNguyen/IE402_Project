@@ -1,5 +1,5 @@
 import supabase from "../lib/supabase.js";
-import multer from 'multer';
+import multer from "multer";
 
 // Sử dụng multer để lưu trữ ảnh trong bộ nhớ tạm
 const upload = multer({ storage: multer.memoryStorage() });
@@ -104,7 +104,7 @@ export const getFilteredProperties = async (req, res) => {
 };
 
 // Middleware upload ảnh
-export const uploadMiddleware = upload.array('images');
+export const uploadMiddleware = upload.array("images");
 
 // Hàm tạo bất động sản mới với ảnh
 export const createProperty = async (req, res) => {
@@ -139,7 +139,7 @@ export const createProperty = async (req, res) => {
       .single();
 
     if (maxIdError) {
-      console.error('Error fetching max ID:', maxIdError);
+      console.error("Error fetching max ID:", maxIdError);
       return res.status(500).json({ error: maxIdError.message });
     }
 
@@ -173,7 +173,7 @@ export const createProperty = async (req, res) => {
 
     // Check for errors
     if (propertyError) {
-      console.error('Property insert error:', propertyError);
+      console.error("Property insert error:", propertyError);
       return res.status(500).json({ error: propertyError.message });
     }
 
@@ -187,7 +187,7 @@ export const createProperty = async (req, res) => {
         .upload(fileName, file.buffer, { cacheControl: "3600", upsert: false });
 
       if (uploadError) {
-        console.error('Upload error:', uploadError);
+        console.error("Upload error:", uploadError);
         throw uploadError;
       }
 
@@ -195,16 +195,14 @@ export const createProperty = async (req, res) => {
       const publicURL = `https://frjddntilpbemgetzbbg.supabase.co/storage/v1/object/public/IE402_Image/${fileName}`;
 
       // Insert image info into 'images' table
-      const { error: imageError } = await supabase
-        .from("images")
-        .insert({
-          property_id: newId, // Use the ID of the property just created
-          image_url: publicURL,
-          alt_text: file.originalname,
-        });
+      const { error: imageError } = await supabase.from("images").insert({
+        property_id: newId, // Use the ID of the property just created
+        image_url: publicURL,
+        alt_text: file.originalname,
+      });
 
       if (imageError) {
-        console.error('Image insert error:', imageError);
+        console.error("Image insert error:", imageError);
         throw imageError;
       }
     });
@@ -213,9 +211,11 @@ export const createProperty = async (req, res) => {
     await Promise.all(uploadPromises);
 
     // Successful response
-    res.status(201).json({ message: "Property created successfully", data: propertyData });
+    res
+      .status(201)
+      .json({ message: "Property created successfully", data: propertyData });
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -224,7 +224,8 @@ export const getPropertiesAsc = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("properties")
-      .select(`
+      .select(
+        `
         id,
         name,
         street,
@@ -255,7 +256,8 @@ export const getPropertiesAsc = async (req, res) => {
           image_url,
           alt_text
         )
-      `)
+      `
+      )
       .order("price", { ascending: true });
 
     if (error) throw error;
@@ -270,7 +272,8 @@ export const getPropertiesDesc = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("properties")
-      .select(`
+      .select(
+        `
         id,
         name,
         street,
@@ -301,7 +304,8 @@ export const getPropertiesDesc = async (req, res) => {
           image_url,
           alt_text
         )
-      `)
+      `
+      )
       .order("price", { ascending: false });
 
     if (error) throw error;
@@ -318,7 +322,8 @@ export const getPropertyById = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from("properties")
-      .select(`
+      .select(
+        `
         id,
         name,
         street,
@@ -349,7 +354,8 @@ export const getPropertyById = async (req, res) => {
           image_url,
           alt_text
         )
-      `)
+      `
+      )
       .eq("id", id)
       .single();
 
