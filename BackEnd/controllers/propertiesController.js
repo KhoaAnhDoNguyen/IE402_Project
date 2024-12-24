@@ -4,6 +4,7 @@ import multer from "multer";
 // Sử dụng multer để lưu trữ ảnh trong bộ nhớ tạm
 const upload = multer({ storage: multer.memoryStorage() });
 
+//Lấy hết property
 export const getProperties = async (req, res) => {
   try {
     const { data, error } = await supabase.from("properties").select(`
@@ -434,6 +435,60 @@ export const deletePropertyById = async (req, res) => {
     res.status(204).send(); // Trả về 204 No Content
   } catch (error) {
     console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getPropertyByUserId = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const { data, error } = await supabase
+      .from("properties")
+      .select(
+        `
+        id,
+        name,
+        street,
+        latitude,
+        longitude,
+        type,
+        price,
+        description,
+        availability,
+        created_at,
+        distance_school,
+        distance_bus,
+        distance_food,
+        created_by,
+        square,
+        bedroom,
+        bathroom,
+        wards (
+          id,
+          name,
+          districts (
+            id,
+            name
+          )
+        ),
+        images (
+          id,
+          image_url,
+          alt_text
+        )
+      `
+      )
+      .eq("created_by", userId)
+          
+    if (error) throw error;
+
+    if (!data) {
+      return res.status(404).json({ error: "Property not found" });
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };

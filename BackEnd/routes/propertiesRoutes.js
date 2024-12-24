@@ -1,6 +1,6 @@
 import express from 'express';
 import { getProperties, getFilteredProperties, createProperty, getPropertiesAsc, getPropertiesDesc,
-    getPropertyById,   deletePropertyById // Nhập hàm xóa
+    getPropertyById,   deletePropertyById , getPropertyByUserId // Nhập hàm xóa
 
 } from '../controllers/propertiesController.js';
 import { validateUserId } from '../middleware/authMiddleware.js'; 
@@ -27,5 +27,7 @@ router.get('/properties/desc', getPropertiesDesc);
 router.get('/properties/:id', getPropertyById);
 
 router.delete('/properties/:id', deletePropertyById); // Thêm route xóa
+
+router.get('/properties/user/:userId', getPropertyByUserId);
 
 export default router;
