@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"; // Import useParams
+import { useParams, useNavigate } from "react-router-dom"; // Import useParams
 import "./singlePage.scss";
 import Slider from "../../components/slider/Slider";
 import DOMPurify from "dompurify";
@@ -6,12 +6,16 @@ import { useState, useEffect } from "react";
 import { userData } from "../../lib/dummydata"; // Dữ liệu tĩnh
 import CommentList from "../../components/comment/CommentList";
 import Checkout from "../../components/payment/Checkout.jsx";
+import mapboxgl from 'mapbox-gl'; // Import mapbox-gl
+
+mapboxgl.accessToken = 'pk.eyJ1Ijoia2hvYTIwMDMiLCJhIjoiY20yOGp4em0xMTQ5bTJrcHo2ZHpjaTExYSJ9.a0YJlfZTZXas3EQtWslMfw';
 
 function SinglePage() {
   const { id } = useParams(); // Lấy postId từ URL params
   const [post, setPost] = useState(null); // State lưu thông tin bài viết
   const [saved, setSaved] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -50,9 +54,42 @@ function SinglePage() {
     setIsPaymentModalOpen(false);
   };
 
+  useEffect(() => {
+    // Check if post and coordinates are available
+    if (post && post.latitude && post.longitude) {
+      // Initialize the map
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [post.longitude, post.latitude],
+        zoom: 12,
+        interactive: true,
+      });
+  
+      // Add a marker at the post location
+      new mapboxgl.Marker({ color: "#FF0000" })
+        .setLngLat([post.longitude, post.latitude])
+        .addTo(map);
+  
+      // Center the map on the marker initially
+      map.setCenter([post.longitude, post.latitude]);
+  
+      // Cleanup function to remove the map on component unmount
+      return () => {
+        map.remove();
+      };
+    }
+  }, [post]);
+  
   if (!post) return <div>Loading...</div>; // Hiển thị loading khi dữ liệu chưa được tải
 
   const monthlyPrice = post.price;
+  
+  const handleDirections = () => {
+    if (post && post.latitude && post.longitude) {
+      navigate(`/map?lat=${post.latitude}&lng=${post.longitude}`); // Navigate to Map with lat/lng
+    }
+  };
 
   return (
     <div className="container-1">
@@ -152,10 +189,13 @@ function SinglePage() {
               </div>
             </div>
 
-            <p className="title">Địa điểm</p>
-            <div className="mapContainer">
-              {/* Hiển thị bản đồ với các vị trí */}
-            </div>
+            <p className="title">
+              Địa điểm
+              <button className="directionsButton" onClick={handleDirections}>
+                Chỉ đường
+              </button>
+            </p>
+            <div id="map" className="mapContainer"></div>
           </div>
         </div>
 

@@ -146,6 +146,9 @@
         }
 
         .title {
+          display: flex;
+  justify-content: space-between; // Space between items
+  align-items: center; // Center items vertically
           font-weight: bold;
           font-size: 18px;
           margin-bottom: 10px;
@@ -205,8 +208,24 @@
         }
 
         .mapContainer {
-          width: 100%;
-          height: 200px;
+          //position: relative;
+          width: 100%; /* Chiếm toàn bộ chiều ngang */
+          height: 300px; /* Điều chỉnh chiều cao */
+          border-radius: 10px; /* Bo góc nhẹ */
+          overflow: hidden; /* Đảm bảo bản đồ không bị tràn */
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+          margin-top: -20px;
+        }
+        
+        .directionsButton {
+          padding: 6px 12px;
+          background-color: #fece51; // Button background color
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-weight: bold;
+          color: white;
+          font-size: 14px; // Adjust font size as necessary
         }
 
         .buttons {
