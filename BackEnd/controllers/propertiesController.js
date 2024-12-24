@@ -109,7 +109,16 @@ export const uploadMiddleware = upload.array("images");
 // Hàm tạo bất động sản mới với ảnh
 export const createProperty = async (req, res) => {
   const userId = req.params.userId;
+  
+  // Tạo một đối tượng mới để lưu giá trị đã xử lý
+  const processedBody = {};
 
+  // Duyệt qua tất cả các trường trong req.body
+  for (const [key, value] of Object.entries(req.body)) {
+    processedBody[key] = Array.isArray(value) ? value[0] : value;
+  }
+
+  //console.log(processedBody)
   const {
     name,
     street,
@@ -127,7 +136,7 @@ export const createProperty = async (req, res) => {
     square,
     bedroom,
     bathroom,
-  } = req.body;
+  } = processedBody;
 
   try {
     // Step 1: Get the highest property ID
@@ -177,8 +186,11 @@ export const createProperty = async (req, res) => {
       return res.status(500).json({ error: propertyError.message });
     }
 
+    const halfIndex = Math.floor(req.files.length / 2); // Tính chỉ số giữa
+    const filesToUpload = req.files.slice(0, halfIndex); // Lấy một nửa số file
+
     // Step 3: Handle images and save to 'images' table
-    const uploadPromises = req.files.map(async (file) => {
+    const uploadPromises = filesToUpload.map(async (file) => {
       const fileName = `${Date.now()}_${file.originalname}`;
 
       // Upload image to Supabase Storage
@@ -367,6 +379,61 @@ export const getPropertyById = async (req, res) => {
 
     res.status(200).json(data);
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Hàm xóa bất động sản theo ID
+export const deletePropertyById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Kiểm tra xem bất động sản có tồn tại không
+    const { data: propertyData, error: propertyError } = await supabase
+      .from("properties")
+      .select("id")
+      .eq("id", id)
+      .single();
+
+    if (propertyError || !propertyData) {
+      return res.status(404).json({ error: "Property not found" });
+    }
+
+    // Xóa tất cả các ảnh liên quan đến property này
+    const { data: imagesData, error: imagesError } = await supabase
+      .from("images")
+      .select("id")
+      .eq("property_id", id);
+
+    if (imagesError) {
+      console.error("Error fetching images:", imagesError);
+      return res.status(500).json({ error: imagesError.message });
+    }
+
+    // Nếu có ảnh, xóa chúng
+    if (imagesData.length > 0) {
+      const deleteImagesPromises = imagesData.map(async (image) => {
+        return await supabase.from("images").delete().eq("id", image.id);
+      });
+
+      await Promise.all(deleteImagesPromises);
+    }
+
+    // Xóa bất động sản
+    const { error: deletePropertyError } = await supabase
+      .from("properties")
+      .delete()
+      .eq("id", id);
+
+    if (deletePropertyError) {
+      console.error("Error deleting property:", deletePropertyError);
+      return res.status(500).json({ error: deletePropertyError.message });
+    }
+
+    // Xóa thành công
+    res.status(204).send(); // Trả về 204 No Content
+  } catch (error) {
+    console.error("Error:", error);
     res.status(500).json({ error: error.message });
   }
 };

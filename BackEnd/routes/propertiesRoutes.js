@@ -1,6 +1,7 @@
 import express from 'express';
 import { getProperties, getFilteredProperties, createProperty, getPropertiesAsc, getPropertiesDesc,
-    getPropertyById
+    getPropertyById,   deletePropertyById // Nhập hàm xóa
+
 } from '../controllers/propertiesController.js';
 import { validateUserId } from '../middleware/authMiddleware.js'; 
 import { uploadMiddleware } from '../middleware/uploadMiddleware.js';
@@ -24,5 +25,7 @@ router.get('/properties/desc', getPropertiesDesc);
 
 // Route để lấy thông tin một property theo ID
 router.get('/properties/:id', getPropertyById);
+
+router.delete('/properties/:id', deletePropertyById); // Thêm route xóa
 
 export default router;

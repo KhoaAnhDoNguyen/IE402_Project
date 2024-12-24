@@ -14,6 +14,8 @@ function NewPostPage() {
   const [wards, setWards] = useState([]); // Các phường
   const [selectedDistrict, setSelectedDistrict] = useState(""); // Quận đã chọn
   const [selectedWard, setSelectedWard] = useState(""); // Phường đã chọn
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const navigate = useNavigate();
 
   const { currentUser } = useContext(AuthContext); // Lấy thông tin người dùng từ context
@@ -65,6 +67,8 @@ function NewPostPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Ngăn nhấn nhiều lần
+    setIsSubmitting(true);
 
     const name = e.target.name.value;
     const price = parseFloat(e.target.price.value);
@@ -185,7 +189,9 @@ function NewPostPage() {
       }
 
       setError(errorMessage);
-    }
+    } finally {
+    setIsSubmitting(false); // Reset trạng thái
+  }
   };
 
   return (
