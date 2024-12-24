@@ -29,6 +29,8 @@ function NewPostPage() {
         { ward_id: 2, name: "Linh Tây" },
         { ward_id: 3, name: "Linh Đông" },
         { ward_id: 4, name: "Linh Trung" },
+        { ward_id: 9, name: "Thảo Điền" },
+        { ward_id: 10, name: "Bình Thọ" },
       ],
     },
     "Quận 9, Tp.HCM": {
@@ -38,6 +40,7 @@ function NewPostPage() {
         { ward_id: 6, name: "Tăng Nhơn Phú" },
         { ward_id: 7, name: "Tân Phú" },
         { ward_id: 8, name: "Phước Long B" },
+        { ward_id: 11, name: "Long Thạnh Mỹ" },
       ],
     },
   };
@@ -190,8 +193,8 @@ function NewPostPage() {
 
       setError(errorMessage);
     } finally {
-    setIsSubmitting(false); // Reset trạng thái
-  }
+      setIsSubmitting(false); // Reset trạng thái
+    }
   };
 
   return (

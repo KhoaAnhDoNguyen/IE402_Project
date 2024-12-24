@@ -32,7 +32,7 @@ function MyCard({ item, onDelete, onUpdate }) {
   // Hàm định dạng giá tiền
   const formatPrice = (price) => {
     if (!price) return "Contact for Price";
-    return `${price.toLocaleString("vi-VN")} VND`; // Định dạng số theo tiếng Việt
+    return `${price.toLocaleString("vi-VN")} VNĐ`; // Định dạng số theo tiếng Việt
   };
 
   return (
@@ -68,10 +68,10 @@ function MyCard({ item, onDelete, onUpdate }) {
           </div>
           <div className="actions">
             <Link to={`/update/${item.id}`} className="update-btn">
-              Cập nhật
+              <img src="/edit.png" alt="Edit" />
             </Link>
             <button className="delete-btn" onClick={handleDelete}>
-              Xóa
+              <img src="/bin.png" alt="Delete" />
             </button>
           </div>
         </div>

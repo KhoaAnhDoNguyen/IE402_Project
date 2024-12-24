@@ -6,9 +6,10 @@ import { useState, useEffect } from "react";
 import { userData } from "../../lib/dummydata"; // Dữ liệu tĩnh
 import CommentList from "../../components/comment/CommentList";
 import Checkout from "../../components/payment/Checkout.jsx";
-import mapboxgl from 'mapbox-gl'; // Import mapbox-gl
+import mapboxgl from "mapbox-gl"; // Import mapbox-gl
 
-mapboxgl.accessToken = 'pk.eyJ1Ijoia2hvYTIwMDMiLCJhIjoiY20yOGp4em0xMTQ5bTJrcHo2ZHpjaTExYSJ9.a0YJlfZTZXas3EQtWslMfw';
+mapboxgl.accessToken =
+  "pk.eyJ1Ijoia2hvYTIwMDMiLCJhIjoiY20yOGp4em0xMTQ5bTJrcHo2ZHpjaTExYSJ9.a0YJlfZTZXas3EQtWslMfw";
 
 function SinglePage() {
   const { id } = useParams(); // Lấy postId từ URL params
@@ -65,26 +66,26 @@ function SinglePage() {
         zoom: 12,
         interactive: true,
       });
-  
+
       // Add a marker at the post location
       new mapboxgl.Marker({ color: "#FF0000" })
         .setLngLat([post.longitude, post.latitude])
         .addTo(map);
-  
+
       // Center the map on the marker initially
       map.setCenter([post.longitude, post.latitude]);
-  
+
       // Cleanup function to remove the map on component unmount
       return () => {
         map.remove();
       };
     }
   }, [post]);
-  
+
   if (!post) return <div>Loading...</div>; // Hiển thị loading khi dữ liệu chưa được tải
 
   const monthlyPrice = post.price;
-  
+
   const handleDirections = () => {
     if (post && post.latitude && post.longitude) {
       navigate(`/map?lat=${post.latitude}&lng=${post.longitude}`); // Navigate to Map with lat/lng
@@ -108,7 +109,7 @@ function SinglePage() {
                       {post.wards?.districts?.name || "District"}
                     </span>
                   </div>
-                  <div className="price">${post.price}</div>
+                  <div className="price">{post.price} VNĐ</div>
                   <button className="rentNowButton" onClick={handleRentNow}>
                     Thuê ngay
                   </button>
