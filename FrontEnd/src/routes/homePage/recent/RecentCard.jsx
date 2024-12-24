@@ -265,7 +265,7 @@ const RecentCard = ({ property, isLiked, onAddToSaved, onRemoveFromSaved }) => {
         </div>
         <div className="button flex">
           <div>
-            <button className="btn2">${price}</button>
+            <button className="btn2">{price} VNĐ</button>
           </div>
         </div>
       </div>

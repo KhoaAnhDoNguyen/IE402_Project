@@ -97,7 +97,7 @@ function CardRent({ item, onDelete }) {
           <img src="/pin.png" alt="Location" />
           <span>
             {item.properties.street}, {item.properties.wards?.name || "Ward"},{" "}
-            {item.properties.districts?.name || "District"}
+            {item.properties.wards?.districts?.name || "District"}
           </span>
         </p>
         <p className="price">

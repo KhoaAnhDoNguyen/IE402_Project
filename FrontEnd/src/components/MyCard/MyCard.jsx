@@ -1,13 +1,14 @@
+// import React from "react";
+// import "./mycard.scss"; // Tạo file CSS riêng nếu cần tùy chỉnh giao diện
 // import { Link } from "react-router-dom";
-// import "./card.scss";
 
-// function Card({ item }) {
+// function MyCard({ item, onDelete }) {
 //   if (!item) {
-//     return null; // Nếu item undefined hoặc null, không hiển thị gì cả
+//     return null;
 //   }
-//   console.log("save", item.id);
+
 //   return (
-//     <div className="card">
+//     <div className="myCard">
 //       <Link to={`/${item.id}`} className="imageContainer">
 //         <img
 //           src={item.images?.[0]?.image_url || "/default-image.png"}
@@ -26,7 +27,7 @@
 //           </span>
 //         </p>
 //         <p className="price">
-//           {item.price ? `$ ${item.price}` : "Contact for Price"}
+//           {item.price ? `${item.price} VND` : "Contact for Price"}
 //         </p>
 //         <div className="bottom">
 //           <div className="features">
@@ -40,63 +41,44 @@
 //             </div>
 //           </div>
 //           <div className="icons">
-//             <button className="icon">
-//               <img src="/save.png" alt="Save" />
+//             <button className="icon" onClick={handleDelete}>
+//               <img src="/bin.png" alt="Delete" />
 //             </button>
-//             {/* <button className="icon">
-//               <img src="/chat.png" alt="Chat" />
-//             </button> */}
 //           </div>
 //         </div>
-//         ;
 //       </div>
 //     </div>
 //   );
 // }
 
-// export default Card;
-
+// export default MyCard;
+import React from "react";
+import "./mycard.scss"; // Tạo file CSS riêng nếu cần tùy chỉnh giao diện
 import { Link } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../../context/AuthContext"; // Đường dẫn tới AuthContext
-import "./card.scss";
-
-function Card({ item, onDelete }) {
-  const { currentUser } = useContext(AuthContext); // Lấy thông tin user từ AuthContext
-
+function MyCard({ item, onDelete }) {
   if (!item) {
-    return null; // Không hiển thị gì nếu item undefined/null
+    return null;
   }
 
-  const handleRemoveFavorite = async () => {
-    try {
-      if (!currentUser || !currentUser.id) {
-        alert("Bạn cần đăng nhập để thực hiện thao tác này.");
-        return;
+  const handleDelete = async () => {
+    if (window.confirm("Bạn có chắc muốn xóa bất động sản này?")) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/properties/${item.id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Xóa bất động sản thất bại");
+        }
+
+        onDelete(item.id); // Gọi callback để cập nhật danh sách
+      } catch (error) {
+        console.error("Lỗi khi xóa bất động sản:", error.message);
+        alert("Đã xảy ra lỗi khi xóa bất động sản. Vui lòng thử lại.");
       }
-
-      const response = await fetch(`http://localhost:3000/api/favorites`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: currentUser.id, // Lấy userId từ AuthContext
-          propertyId: item.id,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to remove favorite");
-      }
-
-      const result = await response.json();
-      console.log(result.message);
-      onDelete(item.id); // Gọi hàm onDelete để cập nhật danh sách
-    } catch (error) {
-      console.error("Error removing favorite:", error);
-      alert("Không thể xóa mục yêu thích. Vui lòng thử lại sau.");
     }
   };
 
@@ -120,7 +102,7 @@ function Card({ item, onDelete }) {
           </span>
         </p>
         <p className="price">
-          {item.price ? ` ${item.price} VND` : "Contact for Price"}
+          {item.price ? `${item.price} VND` : "Contact for Price"}
         </p>
         <div className="bottom">
           <div className="features">
@@ -134,22 +116,14 @@ function Card({ item, onDelete }) {
             </div>
           </div>
           <div className="icons">
-            <button
-              className="icon"
-              onClick={handleRemoveFavorite}
-              title="Xóa khỏi yêu thích"
-            >
-              <img src="/save.png" alt="Remove from Favorites" />
+            <button className="icon" onClick={handleDelete}>
+              <img src="/bin.png" alt="Delete" />
             </button>
-            {/* <button className="icon">
-              <img src="/chat.png" alt="Chat" />
-            </button> */}
           </div>
         </div>
-        ;
       </div>
     </div>
   );
 }
 
-export default Card;
+export default MyCard;
