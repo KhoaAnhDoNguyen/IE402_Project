@@ -24,7 +24,7 @@ function UpdatePostPage() {
   const [newImages, setNewImages] = useState([]); // New images
   const [existingImages, setExistingImages] = useState([]); // Existing images
   const [imagesToDelete, setImagesToDelete] = useState([]); // Images marked for deletion
-  
+
   const districts = {
     "TP.Thủ Đức, Tp.HCM": {
       district_id: 1,
@@ -33,6 +33,8 @@ function UpdatePostPage() {
         { ward_id: 2, name: "Linh Tây" },
         { ward_id: 3, name: "Linh Đông" },
         { ward_id: 4, name: "Linh Trung" },
+        { ward_id: 9, name: "Thảo Điền" },
+        { ward_id: 10, name: "Bình Thọ" },
       ],
     },
     "Quận 9, Tp.HCM": {
@@ -42,6 +44,7 @@ function UpdatePostPage() {
         { ward_id: 6, name: "Tăng Nhơn Phú" },
         { ward_id: 7, name: "Tân Phú" },
         { ward_id: 8, name: "Phước Long B" },
+        { ward_id: 11, name: "Long Thạnh Mỹ" },
       ],
     },
   };
@@ -49,7 +52,9 @@ function UpdatePostPage() {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/properties/${id}`);
+        const res = await axios.get(
+          `http://localhost:3000/api/properties/${id}`
+        );
         setFormData(res.data);
         setExistingImages(res.data.images || []); // Set existing images
         setValue(res.data.description || "");
@@ -96,8 +101,6 @@ function UpdatePostPage() {
     setExistingImages((prevImages) => prevImages.filter((_, i) => i !== index)); // Remove from display
   };
 
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
@@ -128,7 +131,7 @@ function UpdatePostPage() {
 
     const updatedFormData = new FormData();
     imagesToDelete.forEach((image) => {
-        updatedFormData.append("imagesToDelete", image.image_url); // Ảnh cần xóa
+      updatedFormData.append("imagesToDelete", image.image_url); // Ảnh cần xóa
     });
 
     updatedFormData.append("name", name);
@@ -139,7 +142,10 @@ function UpdatePostPage() {
     updatedFormData.append("type", type);
     updatedFormData.append("description", value);
     updatedFormData.append("availability", true);
-    updatedFormData.append("district_id", districts[selectedDistrict]?.district_id);
+    updatedFormData.append(
+      "district_id",
+      districts[selectedDistrict]?.district_id
+    );
     updatedFormData.append("ward_id", parseInt(selectedWard));
     updatedFormData.append("distance_school", distanceSchool);
     updatedFormData.append("distance_bus", distanceBus);
@@ -149,13 +155,13 @@ function UpdatePostPage() {
     updatedFormData.append("bathroom", bathroom);
     newImages.forEach((image) => {
       updatedFormData.append("images", image); // Ảnh mới
-  });
+    });
 
-      for (let pair of updatedFormData.entries()) {
-        console.log(pair[0] + ": " + pair[1]); // In ra tên và giá trị của mỗi cặp
-      }
+    for (let pair of updatedFormData.entries()) {
+      console.log(pair[0] + ": " + pair[1]); // In ra tên và giá trị của mỗi cặp
+    }
 
-      try {
+    try {
       const res = await axios.put(
         `http://localhost:3000/api/properties/update/${id}`,
         updatedFormData

@@ -7,10 +7,6 @@
 //   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 // }
 
-// .mapContainer {
-//   position: relative;
-// }
-
 .mapContainer {
   position: relative;
 }
@@ -45,9 +41,12 @@
   color: #666;
 }
 
+.infoPopup__buttons {
+  display: flex; /* Đặt các button trong cùng một hàng */
+  justify-content: space-between; /* Đảm bảo có khoảng cách giữa các button */
+}
+
 .infoPopup__button {
-  display: block;
-  margin-top: 8px;
   padding: 4px 8px;
   background-color: #fece51;
   color: white;
@@ -56,11 +55,18 @@
   text-align: center;
   cursor: pointer;
   font-size: 14px;
-  width: 100px;
+  width: 48%; /* Chiếm một nửa chiều rộng của container */
   height: 35px;
-  margin-left: 40px;
 }
 
 .infoPopup__button:hover {
   background-color: #fbbd25;
+}
+
+.infoPopup__button.red {
+  background-color: #f44336;
+}
+
+.infoPopup__button.red:hover {
+  background-color: #e53935;
 }
