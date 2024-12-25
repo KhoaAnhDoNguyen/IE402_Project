@@ -1,6 +1,6 @@
 import express from 'express';
 import { getProperties, getFilteredProperties, createProperty, getPropertiesAsc, getPropertiesDesc,
-    getPropertyById,   deletePropertyById , getPropertyByUserId // Nhập hàm xóa
+    getPropertyById,   deletePropertyById , getPropertyByUserId, updateProperty // Nhập hàm xóa
 
 } from '../controllers/propertiesController.js';
 import { validateUserId } from '../middleware/authMiddleware.js'; 
@@ -16,6 +16,9 @@ router.get('/properties/filter', getFilteredProperties);
 
 // Route để tạo property mới với xác thực userId
 router.post('/properties/:userId', validateUserId, uploadMiddleware,  createProperty); // Sử dụng middleware ở đây
+
+// Route để cập nhật thông tin bất động sản theo ID
+router.put('/properties/update/:id', uploadMiddleware, updateProperty);
 
 // Route để lấy danh sách properties theo giá tăng dần
 router.get('/properties/asc', getPropertiesAsc);

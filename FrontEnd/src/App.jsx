@@ -8,6 +8,7 @@ import Login from "./routes/login/login";
 import Register from "./routes/register/register";
 import ProfileUpdatePage from "./routes/profileUpdatePage/profileUpdatePage";
 import NewPostPage from "./routes/newPostPage/newPostPage";
+import UpdatePostPage from "./routes/updatePostPage/updatePostPage";
 import Map from "./routes/map/Map";
 import {
   listPageLoader,
@@ -61,6 +62,11 @@ function App() {
           path: "/map",
           element: <Map />,
         },
+        {
+          path: "/update/:id",
+          element: <UpdatePostPage/>
+        }
+
       ],
     },
     // {

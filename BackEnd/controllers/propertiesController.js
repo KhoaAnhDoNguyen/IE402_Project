@@ -492,3 +492,123 @@ export const getPropertyByUserId = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Hàm cập nhật bất động sản theo ID
+export const updateProperty = async (req, res) => {
+  const propertyId = req.params.id;
+
+  // Lấy thông tin về ảnh cần xóa
+  let imagesToDelete = req.body.imagesToDelete || [];
+  if (typeof imagesToDelete === 'string') {
+      imagesToDelete = imagesToDelete.split(',').map(image => image.trim());
+  }
+  imagesToDelete = Array.isArray(imagesToDelete) ? imagesToDelete : [];
+  console.log(imagesToDelete)
+  try {
+      // Bước 1: Xóa các ảnh đã chỉ định
+      if (imagesToDelete.length > 0) {
+          const deletePromises = imagesToDelete.map(async (imageUrl) => {
+              const { error: deleteImageError } = await supabase
+                  .from("images")
+                  .delete()
+                  .eq("image_url", imageUrl);
+              if (deleteImageError) throw deleteImageError;
+
+              const fileName = imageUrl.split('/').pop();
+              const { error: storageError } = await supabase.storage
+                  .from("IE402_Image")
+                  .remove([fileName]);
+              if (storageError) throw storageError;
+          });
+          await Promise.all(deletePromises);
+      }
+
+
+      // Bước 2: Chuẩn bị dữ liệu bất động sản đã cập nhật
+      const processedBody = {};
+      for (const [key, value] of Object.entries(req.body)) {
+          processedBody[key] = Array.isArray(value) ? value[0] : value;
+      }
+
+      const {
+          name, street, latitude, longitude, type, price,
+          description, availability, district_id, ward_id,
+          distance_school, distance_bus, distance_food,
+          square, bedroom, bathroom
+      } = processedBody;
+
+      // Xác thực các trường bắt buộc
+      const requiredFields = [
+          'name', 'price', 'street', 'latitude', 'longitude', 'type',
+          'description', 'availability', 'district_id', 'ward_id',
+          'distance_school', 'distance_bus', 'distance_food',
+          'square', 'bedroom', 'bathroom'
+      ];
+
+      for (const field of requiredFields) {
+          if (processedBody[field] === undefined || processedBody[field] === null) {
+              return res.status(400).json({ error: `${field} is required and cannot be undefined` });
+          }
+      }
+
+      // Chuyển đổi chuỗi thành kiểu dữ liệu phù hợp
+      processedBody.price = parseFloat(processedBody.price);
+      processedBody.latitude = parseFloat(processedBody.latitude);
+      processedBody.longitude = parseFloat(processedBody.longitude);
+      processedBody.square = parseFloat(processedBody.square);
+      processedBody.bedroom = parseInt(processedBody.bedroom, 10);
+      processedBody.bathroom = parseInt(processedBody.bathroom, 10);
+      processedBody.availability = processedBody.availability === 'true';
+      processedBody.district_id = parseInt(processedBody.district_id, 10);
+      processedBody.ward_id = parseInt(processedBody.ward_id, 10);
+      console.log(processedBody)
+
+      delete processedBody.imagesToDelete;
+
+      // Bước 3: Cập nhật tài sản
+      const { error: propertyError } = await supabase
+          .from("properties")
+          .update(processedBody)
+          .eq("id", propertyId);
+
+      if (propertyError) {
+          console.error("Property update error:", propertyError);
+          return res.status(500).json({ error: propertyError.message });
+      }
+      console.log(req.files)
+
+      // Bước 4: Xử lý tải lên hình ảnh mới
+      const uploadPromises = req.files.map(async (file) => {
+        const fileName = `${Date.now()}_${file.originalname}`;
+        const { error: uploadError } = await supabase.storage
+            .from("IE402_Image")
+            .upload(fileName, file.buffer, { cacheControl: "3600", upsert: false });
+
+        if (uploadError) {
+            console.error("Upload error:", uploadError);
+            throw uploadError;
+        }
+
+        const publicURL = `https://frjddntilpbemgetzbbg.supabase.co/storage/v1/object/public/IE402_Image/${fileName}`;
+
+        const { error: imageError } = await supabase.from("images").insert({
+            property_id: propertyId,
+            image_url: publicURL,
+            alt_text: file.originalname,
+        });
+
+        if (imageError) {
+            console.error("Image insert error:", imageError);
+            throw imageError;
+        }
+    });
+
+    // Chờ tất cả hình ảnh được tải lên
+    await Promise.all(uploadPromises);
+
+    res.status(200).json({ message: "Property updated successfully" });
+  } catch (error) {
+      console.error("Error:", error);
+      res.status(500).json({ error: error.message });
+  }
+};
