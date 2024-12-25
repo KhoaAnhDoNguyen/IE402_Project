@@ -44,12 +44,14 @@ ul {
 }
 button {
   border-radius: 5px;
-  padding: 17px 30px;
+  // padding: 17px 30px;
   background: #aa8453 /*#27ae60*/;
   border: none;
   color: #fff;
   cursor: pointer;
   font-weight: bold;
+  height: 50px;
+  width: 130px;
 }
 button i {
   margin-right: 5px;

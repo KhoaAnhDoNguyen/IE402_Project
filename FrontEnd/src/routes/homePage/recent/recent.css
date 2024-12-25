@@ -92,3 +92,14 @@
   text-align: center;
   margin-top: 20px;
 }
+.button .btn2 {
+  border-radius: 5px;
+  /* padding: 17px 30px; */
+  background: #aa8453 /*#27ae60*/;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  height: 70px;
+  width: 190px;
+}

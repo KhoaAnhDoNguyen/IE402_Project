@@ -34,9 +34,10 @@ function HomePage() {
                 Chúng tôi có thể giúp bạn biến ước mơ về một ngôi nhà mới thành
                 hiện thực.
               </p>
-              {user && <p>Xin chào, {user.username}!</p>} {/* Display username if available */}
+              {user && <p>Xin chào, {user.username}!</p>}{" "}
+              {/* Display username if available */}
             </div>
-            <button className="btn5">Khám phá ngay</button>
+            {/* <button className="btn5">Khám phá ngay</button> */}
           </div>
         </div>
       </section>
