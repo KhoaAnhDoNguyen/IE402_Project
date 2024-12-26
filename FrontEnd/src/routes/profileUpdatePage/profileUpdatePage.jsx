@@ -124,7 +124,7 @@ function ProfileUpdatePage() {
               defaultValue={userData.phone_number}
             />
           </div>
-          <div className="item">
+          {/* <div className="item">
             <label htmlFor="role">Role</label>
             <input
               id="role"
@@ -132,15 +132,7 @@ function ProfileUpdatePage() {
               type="text"
               defaultValue={userData.role}
             />
-          </div>
-          <div className="item">
-            <label htmlFor="images">Ảnh</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageUpload(e.target.files)}
-            />
-          </div>
+          </div> */}
           <button type="submit" disabled={loading}>
             {loading ? "Đang cập nhật..." : "Cập nhật"}
           </button>
