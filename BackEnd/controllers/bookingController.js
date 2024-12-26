@@ -15,13 +15,13 @@ const transporter = nodemailer.createTransport({
 
 // Tạo một booking mới
 export const createBooking = async (req, res) => {
-    const { user_id, property_id, revenue, payment_method, rent_month } = req.body;
+    const { user_id, property_id, revenue, payment_method, rent_month, date_rent } = req.body; // Thêm date_rent vào destructuring
 
     try {
         // Insert new booking
         const { data: bookingData, error: bookingError } = await supabase
             .from('bookings')
-            .insert([{ user_id, property_id, revenue, payment_method, rent_month }]);
+            .insert([{ user_id, property_id, revenue, payment_method, rent_month, date_rent }]); // Thêm date_rent vào chèn
 
         if (bookingError) {
             throw bookingError;
@@ -74,6 +74,7 @@ export const createBooking = async (req, res) => {
                     <li><strong>Rental Month:</strong> ${rent_month}</li>
                     <li><strong>Payment Method:</strong> ${payment_method}</li>
                     <li><strong>Revenue:</strong> ${revenue} VND</li>
+                    <li><strong>Rental Date:</strong> ${date_rent}</li> <!-- Thêm trường date_rent vào email -->
                 </ul>
                 <p>We look forward to serving you!</p>
                 <p>Best regards,<br>Your Booking Team</p>
@@ -161,5 +162,58 @@ export const deleteBooking = async (req, res) => {
         res.status(200).json({ message: 'Booking deleted successfully', booking: data });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting booking', error: error.message });
+    }
+};
+
+export const getAllBookingss = async (req, res) => {
+
+    try {
+        const { data, error } = await supabase
+            .from('bookings')
+            .select(`
+                id,
+                revenue,
+                payment_method,
+                rent_month,
+                properties (
+                    id,
+                    name,
+                    street,
+                    latitude,
+                    longitude,
+                    type,
+                    price,
+                    description,
+                    availability,
+                    created_at,
+                    distance_school,
+                    distance_bus,
+                    distance_food,
+                    created_by,
+                    square,
+                    bedroom,
+                    bathroom,
+                    wards (
+                        id,
+                        name,
+                        districts (
+                            id,
+                            name
+                        )
+                    ),
+                    images (
+                        id,
+                        image_url,
+                        alt_text
+                    )
+                )
+            `)
+
+        if (error) {
+            throw error;
+        }
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving bookings', error: error.message });
     }
 };

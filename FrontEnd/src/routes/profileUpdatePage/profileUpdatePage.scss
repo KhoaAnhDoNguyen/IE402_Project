@@ -3,14 +3,16 @@
   display: flex;
 
   .formContainer {
-    flex:3;
+    flex: 3;
     display: flex;
     align-items: center;
     justify-content: center;
+
     form {
       display: flex;
       flex-direction: column;
       gap: 20px;
+      width: 100%; // Ensure form takes full width
 
       .item {
         display: flex;
@@ -18,22 +20,35 @@
         gap: 5px;
 
         label {
+          font-weight: bold; // Make labels stand out
         }
 
         input {
-          padding: 20px;
+          padding: 15px; // Adjust padding for a better fit
           border-radius: 5px;
           border: 1px solid gray;
+          transition: border-color 0.3s;
+
+          &:focus {
+            border-color: teal; // Change border color on focus
+            outline: none; // Remove default outline
+          }
         }
       }
+
       button {
-        padding: 20px;
+        padding: 15px; // Adjusted padding
         border-radius: 5px;
         border: none;
         background-color: teal;
         color: white;
         font-weight: bold;
         cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: darkcyan; // Darker shade on hover
+        }
       }
     }
   }
@@ -47,9 +62,13 @@
     align-items: center;
     justify-content: center;
 
-    .avatar{
-      width: 50%;
-      object-fit: cover;
+    .avatarPreview {
+      width: 100px; // Set a fixed width for the preview
+      height: 100px; // Set a fixed height for the preview
+      object-fit: cover; // Ensure the image covers the area
+      border-radius: 50%; // Make the preview circular
+      border: 2px solid teal; // Add border to the preview
+      margin-top: 10px; // Space above the preview
     }
   }
 }

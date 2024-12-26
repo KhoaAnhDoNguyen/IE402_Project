@@ -19,15 +19,31 @@ const Recent = () => {
         if (!response.ok) {
           throw new Error(`Error fetching properties: ${response.statusText}`);
         }
-        const data = await response.json();
-        console.log("Properties fetched:", data); // Log data fetched from properties API
-        setProperties(data);
+        const propertiesData = await response.json();
+        console.log("Properties fetched:", propertiesData);
+  
+        // Fetch booked property IDs
+        const bookedResponse = await fetch("http://localhost:3000/api/bookings");
+        if (!bookedResponse.ok) {
+          throw new Error(`Error fetching bookings: ${bookedResponse.statusText}`);
+        }
+        const bookedData = await bookedResponse.json();
+        console.log(bookedData)
+        const bookedPropertyIds = bookedData.map((booking) => booking.properties.id);
+        console.log("Booked property IDs:", bookedPropertyIds);
+  
+        // Filter properties to exclude booked ones
+        const availableProperties = propertiesData.filter(
+          (property) => !bookedPropertyIds.includes(property.id)
+        );
+        console.log("Available properties:", availableProperties);
+        setProperties(availableProperties);
       } catch (error) {
         console.error("Error fetching properties:", error);
         setError(error.message);
       }
     };
-
+  
     const fetchSavedList = async () => {
       if (!currentUser) return;
       try {
@@ -39,16 +55,16 @@ const Recent = () => {
           throw new Error(`Error fetching favorites: ${response.statusText}`);
         }
         const data = await response.json();
-        console.log("Saved list fetched:", data); // Log data fetched from saved list API
+        console.log("Saved list fetched:", data);
         const savedPropertyIds = data.map((property) => property.id);
-        console.log("Saved property IDs:", savedPropertyIds); // Log transformed saved property IDs
+        console.log("Saved property IDs:", savedPropertyIds);
         setSavedList(savedPropertyIds);
       } catch (error) {
         console.error("Error fetching favorites:", error);
         setError(error.message);
       }
     };
-
+  
     fetchProperties();
     fetchSavedList();
   }, [currentUser]);

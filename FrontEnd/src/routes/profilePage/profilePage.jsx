@@ -14,86 +14,6 @@ function ProfilePage() {
   const [myList, setMyList] = useState([]);
   const [error, setError] = useState(null);
 
-  // useEffect(() => {
-  //   // Nếu chưa có user, lấy thông tin từ localStorage
-  //   if (!user) {
-  //     const storedUser = localStorage.getItem("user");
-  //     if (storedUser) {
-  //       setUser(JSON.parse(storedUser));
-  //     }
-  //   }
-
-  //   // Lấy danh sách yêu thích từ API nếu người dùng đã đăng nhập
-  //   const fetchSavedList = async () => {
-  //     if (!user) return;
-
-  //     try {
-  //       const response = await fetch(
-  //         `http://localhost:3000/api/favorites/${user.id}`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Không thể lấy danh sách yêu thích");
-  //       }
-  //       const data = await response.json();
-  //       console.log("Danh sách yêu thích:", data); // Log danh sách yêu thích
-  //       setSavedList(data);
-  //     } catch (error) {
-  //       console.error("Lỗi khi lấy danh sách yêu thích:", error);
-  //       setError(error.message);
-  //     }
-  //   };
-
-  //   // Gọi API danh sách đã thuê
-  //   const fetchRentedList = async () => {
-  //     if (!user) return;
-
-  //     try {
-  //       const response = await fetch(
-  //         `http://localhost:3000/api/bookings/${user.id}`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Không thể lấy danh sách đã thuê");
-  //       }
-  //       const data = await response.json();
-  //       // Lọc bỏ các đối tượng có properties === null
-  //       const filteredProperties = (data || []).filter(
-  //         (item) => item.properties !== null
-  //       );
-
-  //       // console.log("Danh sách đã thuê:", data);
-  //       setRentedList(filteredProperties);
-  //       console.log(filteredProperties);
-  //     } catch (error) {
-  //       console.error("Lỗi khi lấy danh sách đã thuê:", error);
-  //       setError(error.message);
-  //     }
-  //   };
-  //   // Gọi API lấy danh sách của tôi
-  //   const fetchMyList = async () => {
-  //     if (!user) return;
-
-  //     try {
-  //       const response = await fetch(
-  //         `http://localhost:3000/api/properties/user/${user.id}`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Không thể lấy danh sách của tôi");
-  //       }
-  //       const data = await response.json();
-  //       console.log("mylist", data);
-  //       setMyList(data);
-  //     } catch (error) {
-  //       console.error("Lỗi khi lấy danh sách của tôi:", error);
-  //       setError(error.message);
-  //     }
-  //   };
-  //   // Gọi API lấy danh sách yêu thích
-  //   fetchSavedList();
-  //   // Gọi API lấy danh sách đã thuê
-  //   fetchRentedList();
-  //   // fetchMyList();
-  //   fetchMyList();
-  // }, [user]);
   useEffect(() => {
     // Nếu chưa có user, lấy thông tin từ localStorage
     if (!user) {
@@ -102,7 +22,7 @@ function ProfilePage() {
         setUser(JSON.parse(storedUser));
       }
     }
-
+    console.log(user)
     // Lấy danh sách yêu thích từ API nếu người dùng đã đăng nhập
     const fetchSavedList = async () => {
       if (!user) return;

@@ -1,5 +1,8 @@
-// authController.js
 import supabase from '../lib/supabase.js';
+import multer from "multer";
+
+// Set up multer for file uploads
+const upload = multer({ storage: multer.memoryStorage() });
 
 // API for registration
 export const register = async (req, res) => {
@@ -60,17 +63,36 @@ export const login = async (req, res) => {
 
 // API for updating user information
 export const updateUser = async (req, res) => {
-  const userId = req.params.userId; // Lấy userId từ tham số URL
-  const { username, email, phone_number, role, avatar, password } = req.body;
+  const userId = req.params.userId;
+  const { username, email, phone_number, role, password } = req.body;
+  
+  // Handle file upload if it exists
+  let avatarUrl = "";
+  if (req.file) { // Use req.file for single file
+    const avatarFile = req.file; // Get the uploaded file
+    const fileName = `avatars/${Date.now()}_${avatarFile.originalname}`;
 
-  // Tạo đối tượng cập nhật
+    // Upload image to Supabase Storage
+    const { error: uploadError } = await supabase.storage
+      .from("IE402_Image")
+      .upload(fileName, avatarFile.buffer, { cacheControl: "3600", upsert: false });
+
+    if (uploadError) {
+      console.error("Upload error:", uploadError);
+      return res.status(500).json({ error: 'Error uploading avatar image.' });
+    }
+
+    // Create public URL for the image
+    avatarUrl = `https://frjddntilpbemgetzbbg.supabase.co/storage/v1/object/public/IE402_Image/${fileName}`; // Replace with your Supabase URL
+  }
+
   const updates = {};
   if (username) updates.username = username;
   if (email) updates.email = email;
   if (phone_number) updates.phone_number = phone_number;
   if (role) updates.role = role;
-  if (avatar) updates.avatar = avatar;
-  if (password) updates.password = password; // Cập nhật mật khẩu nếu có
+  if (avatarUrl) updates.avatar = avatarUrl; // Save the public URL if uploaded
+  if (password) updates.password = password;
 
   try {
     const { data, error } = await supabase
