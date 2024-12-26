@@ -109,7 +109,7 @@ function CardRent({ item, onDelete }) {
           Tháng thuê: {item.rent_month || "Không xác định"}
         </p>
         <p className="revenue">
-          Tổng tiền: {item.revenue.toLocaleString()} VND
+          Tổng tiền: {item.revenue.toLocaleString()} VNĐ
         </p>
       </div>
       <div className="icons">

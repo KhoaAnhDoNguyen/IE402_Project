@@ -29,7 +29,6 @@
       border-radius: 10px;
     }
   }
-
   .textContainer {
     flex: 3;
     display: flex;
@@ -97,7 +96,7 @@
       .actions {
         display: flex;
         gap: 10px;
-      
+
         .update-btn,
         .delete-btn {
           padding: 10px 15px; /* Kích thước nút */
@@ -109,40 +108,47 @@
           text-align: center;
           display: inline-block; /* Đảm bảo nút có kích thước cố định */
           transition: background-color 0.3s, transform 0.2s;
-      
+
           &.update-btn {
-            background-color: #4caf50; /* Màu xanh lá */
-            color: white;
+            background-color: transparent; /* Màu xanh lá */
+            // color: white;
             text-decoration: none;
-      
+
             &:hover {
-              background-color: #45a049; /* Màu xanh đậm hơn */
+              // background-color: #45a049; /* Màu xanh đậm hơn */
               transform: scale(1.05); /* Hiệu ứng phóng lớn */
             }
-      
+
             &:active {
               background-color: #39843c; /* Khi nhấn */
               transform: scale(0.95);
             }
+            img {
+              width: 30px;
+              height: 30px;
+            }
           }
-      
+
           &.delete-btn {
-            background-color: #dc3545;
-            color: white;
-      
+            background-color: transparent;
+            // color: white;
+
             &:hover {
-              background-color: #a71d2a;
+              // background-color: #a71d2a;
               transform: scale(1.05);
             }
-      
+
             &:active {
               background-color: #8b1522;
               transform: scale(0.95);
             }
+            img {
+              width: 30px;
+              height: 30px;
+            }
           }
         }
       }
-      
     }
   }
 }

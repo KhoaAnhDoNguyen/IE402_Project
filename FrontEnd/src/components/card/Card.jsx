@@ -67,7 +67,11 @@ function Card({ item, onDelete }) {
   if (!item) {
     return null; // Không hiển thị gì nếu item undefined/null
   }
-
+  // Hàm định dạng giá tiền
+  const formatPrice = (price) => {
+    if (!price) return "Contact for Price";
+    return `${price.toLocaleString("vi-VN")} VNĐ`; // Định dạng số theo tiếng Việt
+  };
   const handleRemoveFavorite = async () => {
     try {
       if (!currentUser || !currentUser.id) {
@@ -120,7 +124,7 @@ function Card({ item, onDelete }) {
           </span>
         </p>
         <p className="price">
-          {item.price ? ` ${item.price} VND` : "Contact for Price"}
+          {item.price ? formatPrice(item.price) : "Contact for Price"}
         </p>
         <div className="bottom">
           <div className="features">
