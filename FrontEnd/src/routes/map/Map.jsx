@@ -296,10 +296,11 @@ function Map() {
   const location = useLocation();
   const [currentLocation, setCurrentLocation] = useState(null);
   const [properties, setProperties] = useState([]);
+  const [selectedProperty, setSelectedProperty] = useState(null);
   const [map, setMap] = useState(null);
+  const [routeLayerId] = useState("route");
 
   useEffect(() => {
-    // Get current location of the user
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         setCurrentLocation({
@@ -311,7 +312,6 @@ function Map() {
   }, []);
 
   useEffect(() => {
-    // Fetch properties from API
     const fetchProperties = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/properties");
@@ -335,42 +335,22 @@ function Map() {
       });
 
       setMap(newMap);
-
       newMap.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-      // Add marker for current location
       new mapboxgl.Marker({ color: "blue" })
         .setLngLat([currentLocation.lng, currentLocation.lat])
         .addTo(newMap);
 
-      // Add markers for properties
       properties.forEach((property) => {
-        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-          <div class="infoPopup">
-            <img src="${
-              property.images?.[0]?.image_url || "placeholder.jpg"
-            }" alt="Property" class="infoPopup__image" />
-            <div class="infoPopup__details">
-              <h4 class="infoPopup__title">${property.name}</h4>
-              <p class="infoPopup__description">
-                ${property.bedroom} phòng<br />
-                ${property.price} VNĐ
-              </p>
-              <button class="infoPopup__button" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${
-                property.latitude
-              },${property.longitude}', '_blank')">Chỉ đường</button>
-            </div>
-          </div>
-        `);
-
-        // Add property marker with popup
-        new mapboxgl.Marker({ color: "red" })
+        const marker = new mapboxgl.Marker({ color: "red" })
           .setLngLat([property.longitude, property.latitude])
-          .setPopup(popup)
           .addTo(newMap);
+
+        marker.getElement().addEventListener("click", () => {
+          setSelectedProperty(property);
+        });
       });
 
-      // Draw route if both current location and destination are available
       const lat = new URLSearchParams(location.search).get("lat");
       const lng = new URLSearchParams(location.search).get("lng");
 
@@ -385,9 +365,6 @@ function Map() {
   }, [currentLocation, properties, location]);
 
   const drawRoute = async (startLng, startLat, endLng, endLat, map) => {
-    const routeLayerId = "route";
-
-    // Remove any existing route layer
     if (map.getLayer(routeLayerId)) {
       map.removeLayer(routeLayerId);
       map.removeSource(routeLayerId);
@@ -421,19 +398,76 @@ function Map() {
           "line-cap": "round",
         },
         paint: {
-          "line-color": "red", // Line color set to red
+          "line-color": "red",
           "line-width": 6,
         },
       });
     }
   };
 
+  const handleCloseInfoPanel = () => {
+    setSelectedProperty(null);
+  };
+
   return (
-    <div
-      className="mapContainer"
-      ref={mapContainer}
-      style={{ height: "100vh" }}
-    />
+    <div style={{ display: "flex" }}>
+      <div
+        className="mapContainer"
+        ref={mapContainer}
+        style={{ height: "100vh", flex: 1 }}
+      />
+      {selectedProperty && (
+        <div
+          className="infoPanel"
+          style={{
+            width: "300px",
+            padding: "10px",
+            background: "white",
+            borderRadius: "5px",
+            boxShadow: "0 0 10px rgba(0,0,0,0.2)",
+            position: "absolute",
+            left: "10px",
+            top: "10px",
+          }}
+        >
+          <h3>{selectedProperty.name}</h3>
+          <img
+            src={selectedProperty.images?.[0]?.image_url || "placeholder.jpg"}
+            alt="Property"
+          />
+          <p>
+            {selectedProperty.bedroom} phòng
+            <br />
+            {selectedProperty.price} VNĐ
+          </p>
+          <p>
+            Location: {selectedProperty.latitude}, {selectedProperty.longitude}
+          </p>
+          <div className="infoPopup__buttons">
+            <button
+              className="infoPopup__button"
+              onClick={() =>
+                drawRoute(
+                  currentLocation.lng,
+                  currentLocation.lat,
+                  selectedProperty.longitude,
+                  selectedProperty.latitude,
+                  map
+                )
+              }
+            >
+              Chỉ đường
+            </button>
+            <button
+              className="infoPopup__button red"
+              onClick={handleCloseInfoPanel}
+            >
+              X
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 

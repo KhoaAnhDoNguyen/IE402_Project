@@ -8,7 +8,7 @@ function ProfileUpdatePage() {
   const [avatarFile, setAvatarFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -66,7 +66,9 @@ function ProfileUpdatePage() {
         }
       );
 
+      // Đọc kết quả từ API và ghi log
       const result = await response.json();
+      console.log("Dữ liệu trả về từ API:", result); // Log dữ liệu trả về
 
       if (response.ok) {
         updateUser({ ...currentUser, ...result.data });
@@ -124,7 +126,8 @@ function ProfileUpdatePage() {
               defaultValue={userData.phone_number}
             />
           </div>
-          {/* <div className="item">
+          <div className="item">
+            {/* <div className="item">
             <label htmlFor="role">Role</label>
             <input
               id="role"
@@ -133,13 +136,26 @@ function ProfileUpdatePage() {
               defaultValue={userData.role}
             />
           </div> */}
+          </div>
+          <div className="item">
+            <label htmlFor="images">Ảnh</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageUpload(e.target.files)}
+            />
+          </div>
           <button type="submit" disabled={loading}>
             {loading ? "Đang cập nhật..." : "Cập nhật"}
           </button>
           {error && <span className="errorMessage">{error}</span>}
         </form>
         {imagePreview && (
-          <img src={imagePreview} alt="Avatar Preview" className="avatarPreview" />
+          <img
+            src={imagePreview}
+            alt="Avatar Preview"
+            className="avatarPreview"
+          />
         )}
       </div>
     </div>
