@@ -476,6 +476,45 @@ function CommentList({ propertyId }) {
     fetchComments();
   }, [propertyId]);
 
+  // const handleAddComment = async (newCommentContent) => {
+  //   if (!currentUser) {
+  //     alert("Bạn cần đăng nhập để bình luận.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch("http://localhost:3000/api/reviews", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         userId: currentUser.id,
+  //         propertyId,
+  //         comment: newCommentContent,
+  //         date: new Date().toISOString(),
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       // Đảm bảo dữ liệu nhận về có thông tin người dùng và bình luận
+  //       setComments((prevComments) => [
+  //         ...prevComments,
+  //         {
+  //           ...data,
+  //           user: {
+  //             username: currentUser.username,
+  //             avatar: currentUser.avatar,
+  //           }, // Thêm thông tin người dùng vào bình luận
+  //           replies: [],
+  //         },
+  //       ]);
+  //     } else {
+  //       console.error("Error adding comment:", data.error);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error adding comment:", error);
+  //   }
+  // };
   const handleAddComment = async (newCommentContent) => {
     if (!currentUser) {
       alert("Bạn cần đăng nhập để bình luận.");
@@ -490,27 +529,17 @@ function CommentList({ propertyId }) {
           userId: currentUser.id,
           propertyId,
           comment: newCommentContent,
-          date: new Date().toISOString(),
         }),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        // Đảm bảo dữ liệu nhận về có thông tin người dùng và bình luận
-        setComments((prevComments) => [
-          ...prevComments,
-          {
-            ...data,
-            user: {
-              username: currentUser.username,
-              avatar: currentUser.avatar,
-            }, // Thêm thông tin người dùng vào bình luận
-            replies: [],
-          },
-        ]);
-      } else {
-        console.error("Error adding comment:", data.error);
+      if (!response.ok) {
+        throw new Error("Không thể thêm bình luận. Vui lòng thử lại.");
       }
+
+      const { data } = await response.json();
+
+      // Cập nhật danh sách bình luận với bình luận đầy đủ từ backend
+      setComments((prevComments) => [...prevComments, data]);
     } catch (error) {
       console.error("Error adding comment:", error);
     }
